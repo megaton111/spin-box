@@ -45,57 +45,50 @@ const Btn = ({ type, setNum }) => {
 
     switch( e.type ) {
       case 'click' :
-        console.log( 'click' ) ;
+        clearTimeout( timer ) ; 
         setNum(prevNum => prevNum += num ) ;
         break ; 
       case 'mousedown' :
-        console.log( 'mousedown' ) ;
         timer = setTimeout(_=>{
           setLoopBln( true ) ;
         }, 1000) ;
         break ;
       case 'mouseup' : 
-        console.log( 'mouseup' ) ;
         setLoopBln( false ) ; 
         break ; 
     }
 
-  }
+  } // end of btnHandler
 
   useEffect(_=>{
+    console.log( 'useEffect : ', loopBln ) ; 
     if( !loopBln ) return ;
     let timerLoop = null ; 
     let startTime = null ;
-    let elapsedTime = 0 ; 
 
     const cancelHandler = _ => {
-      console.log( 'cancelHandler in' ) ; 
+      console.log( 'cancel in' ) ;
       clearTimeout( timer ) ;
       cancelAnimationFrame( timerLoop ) ;
       setLoopBln( false ) ; 
-    }
+    } // end of cancelHandler
 
     const loop = timestamp => {
-      console.log( 'loop in' ) ;
       if( startTime == null ) startTime = timestamp ;
-      elapsedTime = Math.round( timestamp - startTime ) ;
-
       setNum( prevNum => prevNum += num ) ; 
-
       timerLoop = requestAnimationFrame( loop ) ;
-    }
+    } // end of loop
 
     timerLoop = requestAnimationFrame( loop ) ;
     window.addEventListener( 'click' , cancelHandler ) ; 
 
     // unmount
     return _ => {
-      console.log( 'unmount in' ) ;
       window.removeEventListener( 'click' , cancelHandler ) ; 
       cancelHandler() ; 
     }
 
-  }, [loopBln])
+  }, [loopBln]) ; // end of useEffect
 
   return (
     <BtnBlock
